@@ -1,9 +1,7 @@
 import axios from "axios";
 import * as qs from "qs";
 import User from "../v1/models/User"
-import {Request, Response} from "express"
-import { Router } from "express"
-const authRouter = Router()
+import { Request, Response } from "express"
 
 require("dotenv").config()
 
@@ -11,14 +9,14 @@ export const renderSignin = async (req: Request, res: Response) => {
     res.render("oldies/signin_old")
 }
 
-export const signout = async (req:Request, res:Response)=>{
-    req.session.destroy((err) => {})
+export const signout = async (req: Request, res: Response) => {
+    req.session.destroy((err) => { })
     res.clearCookie("connect.sid")
 
     res.redirect("/")
 }
 
-export const oauthSignin = async (req:Request, res:Response) => {
+export const oauthSignin = async (req: Request, res: Response) => {
     const provider = req.params.provider
 
 
@@ -31,7 +29,7 @@ export const oauthSignin = async (req:Request, res:Response) => {
     res.redirect(getAuthCodeURL(provider))
 }
 
-export const oauthCallback = async (req:Request, res:Response) => {
+export const oauthCallback = async (req: Request, res: Response) => {
     const { code } = req.query
     const provider = req.params.provider
 
@@ -52,27 +50,27 @@ export const oauthCallback = async (req:Request, res:Response) => {
 
     //get user profile from oauth server
     getUserProfile({ code: code.toString(), provider })
-    .then((profile) => {
-        res.send(profile)
-    })
-    .catch(err => {
-        res.status(500).json({
-            code : 500,
-            message : "해당 서비스에서 계정 정보를 가져오는 도중 문제가 발생했습니다.",
-            err : err,
+        .then((profile) => {
+            res.send(profile)
         })
-    })
+        .catch(err => {
+            res.status(500).json({
+                code: 500,
+                message: "해당 서비스에서 계정 정보를 가져오는 도중 문제가 발생했습니다.",
+                err: err,
+            })
+        })
 }
 
 export const Errors = {
     getProfileError: new Error("failed get profile from api server")
 }
 
-interface API_INFO{
-    [key : string] : any,
+interface API_INFO {
+    [key: string]: any,
 }
 
-const api_info:API_INFO= {
+const api_info: API_INFO = {
     "google": {
         app_key: process.env.GOOGLE_APP_KEY,
         client_id: process.env.GOOGLE_CLIENT_ID,
@@ -105,6 +103,7 @@ const api_info:API_INFO= {
         redirect_url: "http://localhost:8000/auth/signin/kakao/callback",
     }
 }
+
 
 export const RegisteredAPILabels = Object.keys(api_info)
 
@@ -221,8 +220,7 @@ export function getUserProfile(auth_code: authorization_code): Promise<any> {
             .then((profile) => {
                 resolve(profile)
             })
-            .catch(err => {
-                console.log(err)
+            .catch((err) => {
                 reject(err)
             })
     })
